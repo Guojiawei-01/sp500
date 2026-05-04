@@ -29,7 +29,7 @@ Generated processed files:
 
 - `headlines_clean.csv`: raw headline rows after exact duplicate removal
 - `daily_dataset.csv`: daily headline aggregation with next-day return targets
-- `daily_with_macro.csv`: daily modeling table with FRED macro controls
+- `daily_with_macro.csv`: prepared daily table with FRED macro controls for EDA
 - `eda_summary.json`: machine-readable data preparation summary
 - `eda_headlines_by_year.csv`: yearly headline count summary
 - `eda_regime_summary.csv`: regime-level EDA summary

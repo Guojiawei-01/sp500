@@ -23,10 +23,6 @@ File: `data/raw/sp500_headlines_2008_2024.csv`
 | `daily_text` | string | Headlines for the same date combined into one text field. |
 | `return_next_day` | float | Next trading day's closing price divided by current closing price minus 1. |
 | `direction_next_day` | integer | Binary target equal to 1 when `return_next_day` is positive and 0 otherwise. |
-| `sentiment_compound` | float | Baseline VADER compound sentiment score. |
-| `sentiment_pos` | float | Baseline VADER positive sentiment score. |
-| `sentiment_neu` | float | Baseline VADER neutral sentiment score. |
-| `sentiment_neg` | float | Baseline VADER negative sentiment score. |
 | `regime` | string | Market period label used for segmented analysis. |
 
 ## Macro Fields
@@ -51,7 +47,7 @@ Macro fields are downloaded from FRED and joined to the daily headline table by 
 | --- | --- |
 | `data/processed/headlines_clean.csv` | Raw headline rows after exact duplicate removal. |
 | `data/processed/daily_dataset.csv` | Daily headline aggregation with next-day S&P 500 targets. |
-| `data/processed/daily_with_macro.csv` | Main modeling dataset with macro controls joined. |
+| `data/processed/daily_with_macro.csv` | Prepared daily dataset with macro controls joined for EDA. |
 | `data/processed/eda_summary.json` | Machine-readable data quality and target summary. |
 | `data/processed/eda_headlines_by_year.csv` | Year-level headline volume summary. |
 | `data/processed/eda_regime_summary.csv` | Regime-level return, volatility, headline, and macro summary. |
@@ -63,5 +59,4 @@ Macro fields are downloaded from FRED and joined to the daily headline table by 
 - The dataset uses daily closing prices only, so it cannot measure intraday price reactions.
 - Headline volume increases sharply across the sample period, which can create concept drift.
 - Duplicate headlines exist and should be removed or handled explicitly.
-- Sentiment tools may misread financial context, sarcasm, or ambiguous market language.
-- Monthly macro variables are joined using observation dates, not exact public release timestamps. This is acceptable for descriptive controls but should be handled carefully in predictive modeling.
+- Monthly macro variables are joined using observation dates, not exact public release timestamps. They are included here for descriptive EDA context.

@@ -32,9 +32,9 @@
 - `unemployment_rate`: 100.0% coverage
 - `recession_indicator`: 100.0% coverage
 
-## Notes for Modeling
+## Notes
 
 - Exact duplicate rows are removed before daily aggregation.
 - The target is next trading day's return, not same-day return.
 - FRED macro variables are joined by most recent available observation date using an as-of join.
-- Monthly macro variables may not perfectly reflect publication timing; treat them as controls unless release lags are modeled explicitly.
+- Monthly macro variables are included for EDA context and are joined by observation date.

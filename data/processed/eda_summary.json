@@ -5,7 +5,7 @@
   "date_min": "2008-01-02",
   "date_max": "2024-03-04",
   "unique_trading_dates_raw": 3507,
-  "unique_trading_dates_modeling": 3506,
+  "unique_trading_dates_prepared": 3506,
   "dates_with_multiple_cp_values": 0,
   "missing_values_raw": {
     "Title": 0,

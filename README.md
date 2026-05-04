@@ -40,8 +40,8 @@ Important data limitations:
 - Some headlines may be off-topic or only loosely related to the S&P 500.
 - The dataset has daily closing prices only, so intraday reactions cannot be measured.
 - Headline volume changes strongly over time, especially after 2019.
-- The current file includes duplicate rows that should be handled before modeling.
-- Monthly macro variables are joined by most recent available observation date. Publication lags are not modeled yet.
+- The current file includes duplicate rows that are removed during cleaning.
+- Monthly macro variables are joined by most recent available observation date for EDA context.
 
 ## Repository Structure
 
@@ -82,17 +82,14 @@ Run the data preparation pipeline:
 python scripts/prepare_data.py
 ```
 
-Then open and run the notebooks in order:
+For the current data cleaning and EDA step, run:
 
 ```text
 notebooks/01_data_cleaning.ipynb
 notebooks/02_eda.ipynb
-notebooks/03_sentiment_analysis.ipynb
-notebooks/04_modeling.ipynb
-notebooks/05_backtest_regime_analysis.ipynb
 ```
 
-The first notebook also runs the same preparation script. The generated modeling table is:
+The first notebook also runs the same preparation script. The prepared daily table is:
 
 ```text
 data/processed/daily_with_macro.csv
@@ -100,13 +97,12 @@ data/processed/daily_with_macro.csv
 
 ## Analysis Plan
 
-The analysis is organized around these steps:
+Current completed step:
 
 - `01_data_cleaning.ipynb`: validate raw data, remove duplicates, create daily targets, join macro controls
 - `02_eda.ipynb`: explore headline volume, price movement, returns, macro controls, and regimes
-- `03_sentiment_analysis.ipynb`: create baseline sentiment features
-- `04_modeling.ipynb`: test predictive models for next-day direction and return
-- `05_backtest_regime_analysis.ipynb`: evaluate regimes and simple trading signal performance
+
+The remaining notebooks are placeholders for later team members.
 
 ## Deliverables Checklist
 

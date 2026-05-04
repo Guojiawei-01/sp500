@@ -6,7 +6,6 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 
 
@@ -194,7 +193,7 @@ def write_summaries(raw: pd.DataFrame, clean: pd.DataFrame, daily: pd.DataFrame,
         "date_min": str(raw["Date"].min().date()),
         "date_max": str(raw["Date"].max().date()),
         "unique_trading_dates_raw": int(raw["Date"].nunique()),
-        "unique_trading_dates_modeling": int(daily_macro["Date"].nunique()),
+        "unique_trading_dates_prepared": int(daily_macro["Date"].nunique()),
         "dates_with_multiple_cp_values": int((cp_values_per_date > 1).sum()),
         "missing_values_raw": {k: int(v) for k, v in raw.isna().sum().to_dict().items()},
         "headline_count_per_day": {
@@ -240,7 +239,7 @@ def summary_markdown(summary: dict) -> str:
 
 ## Daily Modeling Table
 
-- Unique trading dates after target creation: {summary["unique_trading_dates_modeling"]:,}
+- Unique trading dates after target creation: {summary["unique_trading_dates_prepared"]:,}
 - Average headlines per trading day: {summary["headline_count_per_day"]["mean"]:.2f}
 - Median headlines per trading day: {summary["headline_count_per_day"]["median"]:.0f}
 - Maximum headlines on one trading day: {summary["headline_count_per_day"]["max"]:,}
@@ -252,12 +251,12 @@ def summary_markdown(summary: dict) -> str:
 
 {macro_lines}
 
-## Notes for Modeling
+## Notes
 
 - Exact duplicate rows are removed before daily aggregation.
 - The target is next trading day's return, not same-day return.
 - FRED macro variables are joined by most recent available observation date using an as-of join.
-- Monthly macro variables may not perfectly reflect publication timing; treat them as controls unless release lags are modeled explicitly.
+- Monthly macro variables are included for EDA context and are joined by observation date.
 """
 
 
