@@ -24,6 +24,16 @@ data/raw/sp500_headlines_2008_2024.csv
 
 The working CSV contains 19,127 rows, 3 columns, and 3,507 unique trading dates from January 2, 2008 through March 4, 2024.
 
+Macro controls are downloaded from FRED by `scripts/prepare_data.py`:
+
+- `VIXCLS`: CBOE Volatility Index
+- `DGS10`: 10-year Treasury constant maturity rate
+- `DGS2`: 2-year Treasury constant maturity rate
+- `FEDFUNDS`: Federal funds effective rate
+- `CPIAUCSL`: Consumer Price Index for All Urban Consumers
+- `UNRATE`: Unemployment rate
+- `USREC`: NBER recession indicator
+
 Important data limitations:
 
 - The original news source is not fully documented.
@@ -31,6 +41,7 @@ Important data limitations:
 - The dataset has daily closing prices only, so intraday reactions cannot be measured.
 - Headline volume changes strongly over time, especially after 2019.
 - The current file includes duplicate rows that should be handled before modeling.
+- Monthly macro variables are joined by most recent available observation date. Publication lags are not modeled yet.
 
 ## Repository Structure
 
@@ -52,6 +63,8 @@ Important data limitations:
 │   ├── 03_sentiment_analysis.ipynb
 │   ├── 04_modeling.ipynb
 │   └── 05_backtest_regime_analysis.ipynb
+├── scripts/
+│   └── prepare_data.py
 └── report/
 ```
 
@@ -63,7 +76,13 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
-Open and run the notebooks in order:
+Run the data preparation pipeline:
+
+```bash
+python scripts/prepare_data.py
+```
+
+Then open and run the notebooks in order:
 
 ```text
 notebooks/01_data_cleaning.ipynb
@@ -73,14 +92,18 @@ notebooks/04_modeling.ipynb
 notebooks/05_backtest_regime_analysis.ipynb
 ```
 
-The notebooks load the CSV from `data/raw/sp500_headlines_2008_2024.csv`.
+The first notebook also runs the same preparation script. The generated modeling table is:
+
+```text
+data/processed/daily_with_macro.csv
+```
 
 ## Analysis Plan
 
 The analysis is organized around these steps:
 
-- `01_data_cleaning.ipynb`: validate raw data, remove duplicates, create daily targets
-- `02_eda.ipynb`: explore headline volume, price movement, returns, and data quality
+- `01_data_cleaning.ipynb`: validate raw data, remove duplicates, create daily targets, join macro controls
+- `02_eda.ipynb`: explore headline volume, price movement, returns, macro controls, and regimes
 - `03_sentiment_analysis.ipynb`: create baseline sentiment features
 - `04_modeling.ipynb`: test predictive models for next-day direction and return
 - `05_backtest_regime_analysis.ipynb`: evaluate regimes and simple trading signal performance

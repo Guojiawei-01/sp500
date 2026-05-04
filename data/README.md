@@ -4,6 +4,7 @@ This folder stores raw and processed project data.
 
 ```text
 data/raw/sp500_headlines_2008_2024.csv
+data/raw/macro/
 data/processed/
 ```
 
@@ -18,4 +19,18 @@ Current file summary:
 - Missing values: none in the current file
 - Duplicate full rows: 974
 
-The raw file should not be edited directly. Cleaned or feature-engineered files can be saved in `data/processed/`.
+The raw headline file should not be edited directly. FRED macro files are downloaded into `data/raw/macro/` by:
+
+```bash
+python scripts/prepare_data.py
+```
+
+Generated processed files:
+
+- `headlines_clean.csv`: raw headline rows after exact duplicate removal
+- `daily_dataset.csv`: daily headline aggregation with next-day return targets
+- `daily_with_macro.csv`: daily modeling table with FRED macro controls
+- `eda_summary.json`: machine-readable data preparation summary
+- `eda_headlines_by_year.csv`: yearly headline count summary
+- `eda_regime_summary.csv`: regime-level EDA summary
+- `eda_macro_coverage.csv`: macro variable coverage rates

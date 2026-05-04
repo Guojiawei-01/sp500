@@ -1,0 +1,38 @@
+{
+  "raw_rows": 19127,
+  "clean_rows": 18153,
+  "exact_duplicate_rows_removed": 974,
+  "date_min": "2008-01-02",
+  "date_max": "2024-03-04",
+  "unique_trading_dates_raw": 3507,
+  "unique_trading_dates_modeling": 3506,
+  "dates_with_multiple_cp_values": 0,
+  "missing_values_raw": {
+    "Title": 0,
+    "Date": 0,
+    "CP": 0
+  },
+  "headline_count_per_day": {
+    "mean": 5.168853394181403,
+    "median": 4.0,
+    "max": 55
+  },
+  "next_day_return": {
+    "mean": 0.00045262665849131,
+    "std": 0.013498350722832328,
+    "min": -0.11984050283657066,
+    "max": 0.1182800467089411,
+    "up_day_rate": 0.5430690245293782
+  },
+  "macro_coverage": {
+    "vix": 1.0,
+    "treasury_10y": 1.0,
+    "treasury_2y": 1.0,
+    "term_spread_10y_2y": 1.0,
+    "fed_funds_rate": 1.0,
+    "cpi_all_items": 1.0,
+    "cpi_yoy": 1.0,
+    "unemployment_rate": 1.0,
+    "recession_indicator": 1.0
+  }
+}
