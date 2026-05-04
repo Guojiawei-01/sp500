@@ -24,7 +24,7 @@ data/raw/sp500_headlines_2008_2024.csv
 
 The working CSV contains 19,127 rows, 3 columns, and 3,507 unique trading dates from January 2, 2008 through March 4, 2024.
 
-Macro controls are downloaded from FRED by `scripts/prepare_data.py`:
+Macro context files are managed by `scripts/prepare_data.py`. The script uses cached FRED files in `data/raw/macro/` by default and only downloads fresh copies when run with `--refresh-macro`.
 
 - `VIXCLS`: CBOE Volatility Index
 - `DGS10`: 10-year Treasury constant maturity rate
@@ -82,6 +82,12 @@ Run the data preparation pipeline:
 python scripts/prepare_data.py
 ```
 
+To refresh the FRED macro files:
+
+```bash
+python scripts/prepare_data.py --refresh-macro
+```
+
 For the current data cleaning and EDA step, run:
 
 ```text
@@ -99,8 +105,8 @@ data/processed/daily_with_macro.csv
 
 Current completed step:
 
-- `01_data_cleaning.ipynb`: validate raw data, remove duplicates, create daily targets, join macro controls
-- `02_eda.ipynb`: explore headline volume, price movement, returns, macro controls, and regimes
+- `01_data_cleaning.ipynb`: validate raw data, remove duplicates, create daily targets, join macro context fields
+- `02_eda.ipynb`: explore headline volume, price movement, returns, macro context, and regimes
 
 The remaining notebooks are placeholders for later team members.
 

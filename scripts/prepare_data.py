@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import json
 from dataclasses import dataclass
 from pathlib import Path
@@ -94,7 +95,21 @@ def fred_url(series_id: str) -> str:
     return f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series_id}"
 
 
-def fetch_fred_series(series: FredSeries) -> pd.DataFrame:
+def load_cached_fred_series(series: FredSeries) -> pd.DataFrame:
+    path = RAW_MACRO_DIR / f"{series.series_id}.csv"
+    df = pd.read_csv(path, na_values=".")
+    if "Date" not in df.columns or series.column not in df.columns:
+        raise ValueError(f"Unexpected cached FRED file for {series.series_id}: {df.columns.tolist()}")
+    df["Date"] = pd.to_datetime(df["Date"])
+    df[series.column] = pd.to_numeric(df[series.column], errors="coerce")
+    return df[["Date", series.column]].sort_values("Date")
+
+
+def fetch_fred_series(series: FredSeries, refresh: bool = False) -> pd.DataFrame:
+    cache_path = RAW_MACRO_DIR / f"{series.series_id}.csv"
+    if cache_path.exists() and not refresh:
+        return load_cached_fred_series(series)
+
     df = pd.read_csv(fred_url(series.series_id), na_values=".")
     df = df.rename(columns={"observation_date": "Date", "DATE": "Date", series.series_id: series.column})
     if "Date" not in df.columns or series.column not in df.columns:
@@ -102,14 +117,14 @@ def fetch_fred_series(series: FredSeries) -> pd.DataFrame:
     df["Date"] = pd.to_datetime(df["Date"])
     df[series.column] = pd.to_numeric(df[series.column], errors="coerce")
     df = df[["Date", series.column]].sort_values("Date")
-    df.to_csv(RAW_MACRO_DIR / f"{series.series_id}.csv", index=False)
+    df.to_csv(cache_path, index=False)
     return df
 
 
-def fetch_macro_data() -> pd.DataFrame:
+def load_macro_data(refresh: bool = False) -> pd.DataFrame:
     frames = []
     for series in FRED_SERIES:
-        frame = fetch_fred_series(series)
+        frame = fetch_fred_series(series, refresh=refresh)
         if series.column == "cpi_all_items":
             frame["cpi_yoy"] = frame["cpi_all_items"].pct_change(periods=12, fill_method=None)
         frames.append(frame)
@@ -140,6 +155,18 @@ def asof_join_macro(daily: pd.DataFrame, macro: pd.DataFrame) -> pd.DataFrame:
 
 def write_summaries(raw: pd.DataFrame, clean: pd.DataFrame, daily: pd.DataFrame, daily_macro: pd.DataFrame) -> None:
     cp_values_per_date = raw.groupby("Date")["CP"].nunique()
+    duplicate_rows = raw[raw.duplicated()].copy()
+    if duplicate_rows.empty:
+        duplicates_by_year = pd.DataFrame(columns=["year", "duplicate_rows_removed"])
+    else:
+        duplicates_by_year = (
+            duplicate_rows.assign(year=duplicate_rows["Date"].dt.year)
+            .groupby("year")
+            .size()
+            .rename("duplicate_rows_removed")
+            .reset_index()
+        )
+
     macro_cols = [
         "vix",
         "treasury_10y",
@@ -186,6 +213,35 @@ def write_summaries(raw: pd.DataFrame, clean: pd.DataFrame, daily: pd.DataFrame,
         .reset_index()
     )
 
+    return_extremes = (
+        daily_macro.assign(abs_next_return=daily_macro["return_next_day"].abs())
+        .nlargest(15, "abs_next_return")
+        [
+            [
+                "Date",
+                "CP",
+                "headline_count",
+                "return_next_day",
+                "return_same_day",
+                "regime",
+                "vix",
+                "daily_text",
+            ]
+        ]
+        .sort_values("Date")
+    )
+
+    market_keywords = (
+        "stock|stocks|market|markets|s&p|sp500|wall st|dow|nasdaq|fed|rate|rates|"
+        "inflation|economy|economic|earnings|treasury|bond|finance|financial|"
+        "investor|investors|trading|shares|equity|equities|etf|dollar"
+    )
+    possible_off_topic = (
+        clean[~clean["Title"].str.lower().str.contains(market_keywords, regex=True, na=False)]
+        .head(50)
+        .copy()
+    )
+
     summary = {
         "raw_rows": int(len(raw)),
         "clean_rows": int(len(clean)),
@@ -214,8 +270,11 @@ def write_summaries(raw: pd.DataFrame, clean: pd.DataFrame, daily: pd.DataFrame,
     }
 
     headlines_by_year.to_csv(PROCESSED_DIR / "eda_headlines_by_year.csv", index=False)
+    duplicates_by_year.to_csv(PROCESSED_DIR / "eda_duplicates_by_year.csv", index=False)
     regime_summary.to_csv(PROCESSED_DIR / "eda_regime_summary.csv", index=False)
     macro_coverage.to_csv(PROCESSED_DIR / "eda_macro_coverage.csv", index=False)
+    return_extremes.to_csv(PROCESSED_DIR / "eda_return_extremes.csv", index=False)
+    possible_off_topic.to_csv(PROCESSED_DIR / "eda_possible_off_topic_sample.csv", index=False)
     (PROCESSED_DIR / "eda_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
     (REPORT_DIR / "data_preparation_summary.md").write_text(summary_markdown(summary), encoding="utf-8")
 
@@ -237,7 +296,7 @@ def summary_markdown(summary: dict) -> str:
 - Dates with multiple S&P 500 close values: {summary["dates_with_multiple_cp_values"]}
 - Missing values in raw data: {summary["missing_values_raw"]}
 
-## Daily Modeling Table
+## Prepared Daily Table
 
 - Unique trading dates after target creation: {summary["unique_trading_dates_prepared"]:,}
 - Average headlines per trading day: {summary["headline_count_per_day"]["mean"]:.2f}
@@ -261,10 +320,18 @@ def summary_markdown(summary: dict) -> str:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description="Prepare headline data and EDA summary files.")
+    parser.add_argument(
+        "--refresh-macro",
+        action="store_true",
+        help="Download fresh FRED macro files instead of using cached files in data/raw/macro/.",
+    )
+    args = parser.parse_args()
+
     ensure_dirs()
     raw = load_headlines()
     clean, daily = clean_headlines(raw)
-    macro = fetch_macro_data()
+    macro = load_macro_data(refresh=args.refresh_macro)
     daily_macro = asof_join_macro(daily, macro)
 
     clean.to_csv(PROCESSED_DIR / "headlines_clean.csv", index=False)

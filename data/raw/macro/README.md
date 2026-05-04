@@ -1,6 +1,8 @@
 # Macro Data
 
-These files are downloaded from FRED by `scripts/prepare_data.py`.
+These files are downloaded from FRED by `scripts/prepare_data.py --refresh-macro`.
+
+By default, `python scripts/prepare_data.py` uses these cached files so the project can be rerun without live network access.
 
 | File | FRED Series | Description |
 | --- | --- | --- |

@@ -14,24 +14,30 @@ File: `data/raw/sp500_headlines_2008_2024.csv`
 | `Date` | date | Trading date associated with the headline and S&P 500 close. | Format is `YYYY-MM-DD`. The current file covers 2008-01-02 to 2024-03-04. |
 | `CP` | float | S&P 500 closing price for the date. | `CP` is constant within each date in the current file. |
 
-## Derived Fields Used in Analysis
+## Prepared Daily Fields
 
 | Field | Type | Description |
 | --- | --- | --- |
+| `Date` | date | Trading date after daily aggregation. |
+| `CP` | float | S&P 500 closing price for the trading date. |
 | `headline_count` | integer | Number of headlines on a trading date. |
 | `unique_headline_count` | integer | Number of unique headlines on a trading date after duplicate checking. |
 | `daily_text` | string | Headlines for the same date combined into one text field. |
+| `close_next_day` | float | S&P 500 closing price on the next available trading date. |
 | `return_next_day` | float | Next trading day's closing price divided by current closing price minus 1. |
 | `direction_next_day` | integer | Binary target equal to 1 when `return_next_day` is positive and 0 otherwise. |
+| `return_same_day` | float | Same-day close-to-close return from the previous available trading date to the current date. |
+| `year` | integer | Calendar year extracted from `Date`. |
+| `month` | string | Calendar month extracted from `Date` in `YYYY-MM` format. |
 | `regime` | string | Market period label used for segmented analysis. |
 
 ## Macro Fields
 
-Macro fields are downloaded from FRED and joined to the daily headline table by most recent available observation date.
+Macro fields are downloaded from FRED, cached in `data/raw/macro/`, and joined to the daily headline table by most recent available observation date.
 
 | Field | FRED Series | Type | Description |
 | --- | --- | --- | --- |
-| `vix` | `VIXCLS` | float | CBOE Volatility Index, used as a market uncertainty control. |
+| `vix` | `VIXCLS` | float | CBOE Volatility Index, used as market uncertainty context. |
 | `treasury_10y` | `DGS10` | float | 10-year Treasury constant maturity rate. |
 | `treasury_2y` | `DGS2` | float | 2-year Treasury constant maturity rate. |
 | `term_spread_10y_2y` | derived from `DGS10 - DGS2` | float | Yield curve slope between 10-year and 2-year Treasury rates. |
@@ -47,9 +53,12 @@ Macro fields are downloaded from FRED and joined to the daily headline table by 
 | --- | --- |
 | `data/processed/headlines_clean.csv` | Raw headline rows after exact duplicate removal. |
 | `data/processed/daily_dataset.csv` | Daily headline aggregation with next-day S&P 500 targets. |
-| `data/processed/daily_with_macro.csv` | Prepared daily dataset with macro controls joined for EDA. |
+| `data/processed/daily_with_macro.csv` | Prepared daily dataset with macro context fields joined for EDA. |
 | `data/processed/eda_summary.json` | Machine-readable data quality and target summary. |
 | `data/processed/eda_headlines_by_year.csv` | Year-level headline volume summary. |
+| `data/processed/eda_duplicates_by_year.csv` | Year-level count of exact duplicate rows removed. |
+| `data/processed/eda_return_extremes.csv` | Largest absolute next-day return dates for manual EDA review. |
+| `data/processed/eda_possible_off_topic_sample.csv` | Simple keyword-based sample of headlines for manual quality review. |
 | `data/processed/eda_regime_summary.csv` | Regime-level return, volatility, headline, and macro summary. |
 | `data/processed/eda_macro_coverage.csv` | Macro variable coverage summary. |
 

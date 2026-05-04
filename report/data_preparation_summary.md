@@ -10,7 +10,7 @@
 - Dates with multiple S&P 500 close values: 0
 - Missing values in raw data: {'Title': 0, 'Date': 0, 'CP': 0}
 
-## Daily Modeling Table
+## Prepared Daily Table
 
 - Unique trading dates after target creation: 3,506
 - Average headlines per trading day: 5.17
