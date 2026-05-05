@@ -36,6 +36,12 @@ Generated processed files:
 - `headlines_clean.csv`: raw headline rows after exact duplicate removal
 - `daily_dataset.csv`: daily headline aggregation with next-day return targets
 - `daily_with_macro.csv`: prepared daily table with FRED macro context fields for EDA
+- `headlines_with_sentiment.csv`: headline-level dictionary sentiment scores
+- `daily_with_sentiment.csv`: daily table with macro context, targets, and sentiment features for modeling
+- `sentiment_summary.json`: machine-readable sentiment analysis summary
+- `sentiment_correlation_summary.csv`: descriptive correlations between sentiment features and next-day outcomes
+- `sentiment_tercile_summary.csv`: next-day outcomes grouped by daily finance sentiment tercile
+- `sentiment_regime_summary.csv`: sentiment and return summary by market regime
 - `eda_summary.json`: machine-readable data preparation summary
 - `eda_headlines_by_year.csv`: yearly headline count summary
 - `eda_duplicates_by_year.csv`: duplicate rows removed by year

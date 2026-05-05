@@ -47,6 +47,30 @@ Macro fields are downloaded from FRED, cached in `data/raw/macro/`, and joined t
 | `unemployment_rate` | `UNRATE` | float | U.S. unemployment rate. |
 | `recession_indicator` | `USREC` | float | NBER recession indicator, where 1 indicates recession and 0 indicates non-recession. |
 
+## Sentiment Fields
+
+The sentiment baseline is created in `notebooks/03_sentiment_analysis.ipynb` using transparent word and phrase dictionaries. These fields are intended as baseline features, not final NLP model outputs.
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `token_count` | integer | Number of parsed tokens in a headline. |
+| `general_positive_count` | integer | Count of general positive dictionary terms in a headline. |
+| `general_negative_count` | integer | Count of general negative dictionary terms in a headline. |
+| `finance_positive_count` | integer | Count of finance-specific positive dictionary terms and phrases in a headline. |
+| `finance_negative_count` | integer | Count of finance-specific negative dictionary terms and phrases in a headline. |
+| `general_sentiment_score` | float | Headline-level general score, computed as positive minus negative counts divided by token count. |
+| `finance_sentiment_score` | float | Headline-level finance score, computed as positive minus negative finance counts divided by token count. |
+| `finance_sentiment_label` | string | Headline label: `positive`, `negative`, or `neutral`, based on the finance sentiment score. |
+| `scored_headline_count` | integer | Number of scored headlines on a trading date. |
+| `total_token_count` | integer | Total parsed headline tokens on a trading date. |
+| `avg_general_sentiment` | float | Average headline-level general sentiment score on a trading date. |
+| `avg_finance_sentiment` | float | Average headline-level finance sentiment score on a trading date. |
+| `finance_sentiment_std` | float | Standard deviation of headline-level finance sentiment scores on a trading date. |
+| `positive_headline_share` | float | Share of headlines labeled positive on a trading date. |
+| `negative_headline_share` | float | Share of headlines labeled negative on a trading date. |
+| `neutral_headline_share` | float | Share of headlines labeled neutral on a trading date. |
+| `net_positive_negative_share` | float | Positive headline share minus negative headline share on a trading date. |
+
 ## Processed Files
 
 | File | Description |
@@ -54,6 +78,12 @@ Macro fields are downloaded from FRED, cached in `data/raw/macro/`, and joined t
 | `data/processed/headlines_clean.csv` | Raw headline rows after exact duplicate removal. |
 | `data/processed/daily_dataset.csv` | Daily headline aggregation with next-day S&P 500 targets. |
 | `data/processed/daily_with_macro.csv` | Prepared daily dataset with macro context fields joined for EDA. |
+| `data/processed/headlines_with_sentiment.csv` | Headline-level dictionary sentiment scores. |
+| `data/processed/daily_with_sentiment.csv` | Daily market, macro, target, and sentiment features for modeling. |
+| `data/processed/sentiment_summary.json` | Machine-readable sentiment analysis summary. |
+| `data/processed/sentiment_correlation_summary.csv` | Descriptive correlations between sentiment features and next-day outcomes. |
+| `data/processed/sentiment_tercile_summary.csv` | Next-day outcomes grouped by daily finance sentiment tercile. |
+| `data/processed/sentiment_regime_summary.csv` | Sentiment and return summary by market regime. |
 | `data/processed/eda_summary.json` | Machine-readable data quality and target summary. |
 | `data/processed/eda_headlines_by_year.csv` | Year-level headline volume summary. |
 | `data/processed/eda_duplicates_by_year.csv` | Year-level count of exact duplicate rows removed. |
@@ -69,3 +99,4 @@ Macro fields are downloaded from FRED, cached in `data/raw/macro/`, and joined t
 - Headline volume increases sharply across the sample period, which can create concept drift.
 - Duplicate headlines exist and should be removed or handled explicitly.
 - Monthly macro variables are joined using observation dates, not exact public release timestamps. They are included here for descriptive EDA context.
+- Dictionary sentiment is transparent and reproducible, but it can misread context, sarcasm, and finance-specific phrasing. It should be treated as a baseline.

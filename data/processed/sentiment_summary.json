@@ -1,0 +1,12 @@
+{
+  "headline_rows_scored": 18153,
+  "daily_rows_with_sentiment": 3506,
+  "headline_label_counts": {
+    "neutral": 12399,
+    "positive": 3293,
+    "negative": 2461
+  },
+  "mean_daily_finance_sentiment": 0.0034576717817079872,
+  "mean_daily_general_sentiment": 0.005201588849159752,
+  "corr_avg_finance_sentiment_next_return": -0.011969518253028288
+}

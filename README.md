@@ -88,17 +88,24 @@ To refresh the FRED macro files:
 python scripts/prepare_data.py --refresh-macro
 ```
 
-For the current data cleaning and EDA step, run:
+For the current data cleaning, EDA, and sentiment baseline steps, run:
 
 ```text
 notebooks/01_data_cleaning.ipynb
 notebooks/02_eda.ipynb
+notebooks/03_sentiment_analysis.ipynb
 ```
 
-The first notebook also runs the same preparation script. The prepared daily table is:
+The first notebook also runs the same preparation script. The prepared daily table with macro context is:
 
 ```text
 data/processed/daily_with_macro.csv
+```
+
+The sentiment notebook creates the modeling-ready table:
+
+```text
+data/processed/daily_with_sentiment.csv
 ```
 
 ## Analysis Plan
@@ -107,8 +114,12 @@ Current completed step:
 
 - `01_data_cleaning.ipynb`: validate raw data, remove duplicates, create daily targets, join macro context fields
 - `02_eda.ipynb`: explore headline volume, price movement, returns, macro context, and regimes
+- `03_sentiment_analysis.ipynb`: score headlines with a reproducible dictionary baseline, aggregate daily sentiment features, and summarize descriptive links with next-day returns
 
-The remaining notebooks are placeholders for later team members.
+Remaining planned steps:
+
+- `04_modeling.ipynb`: train and validate next-day return or direction models using time-aware splits
+- `05_backtest_regime_analysis.ipynb`: evaluate model signals across regimes and test a simple long/flat strategy
 
 ## Deliverables Checklist
 
