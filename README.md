@@ -61,6 +61,7 @@ Important data limitations:
 │   ├── 01_data_cleaning.ipynb
 │   ├── 02_eda.ipynb
 │   ├── 03_sentiment_analysis.ipynb
+│   ├── 03b_advanced_sentiment.ipynb
 │   ├── 04_modeling.ipynb
 │   └── 05_backtest_regime_analysis.ipynb
 ├── scripts/
@@ -88,38 +89,39 @@ To refresh the FRED macro files:
 python scripts/prepare_data.py --refresh-macro
 ```
 
-For the current data cleaning, EDA, and sentiment baseline steps, run:
+Run the notebooks in order:
 
 ```text
 notebooks/01_data_cleaning.ipynb
 notebooks/02_eda.ipynb
 notebooks/03_sentiment_analysis.ipynb
+notebooks/03b_advanced_sentiment.ipynb
+notebooks/04_modeling.ipynb
 ```
 
-The first notebook also runs the same preparation script. The prepared daily table with macro context is:
+Key intermediate tables:
 
 ```text
-data/processed/daily_with_macro.csv
-```
-
-The sentiment notebook creates the modeling-ready table:
-
-```text
-data/processed/daily_with_sentiment.csv
+data/processed/daily_with_macro.csv          # 01 output
+data/processed/daily_with_sentiment.csv      # 03 output (dictionary baseline)
+data/processed/daily_with_sentiment_v2.csv   # 03b output (+ VADER + FinBERT + topics)
+data/processed/model_predictions.csv         # 04 output, consumed by 05
+data/processed/model_metrics_summary.csv     # 04 output
 ```
 
 ## Analysis Plan
 
-Current completed step:
+Completed steps:
 
 - `01_data_cleaning.ipynb`: validate raw data, remove duplicates, create daily targets, join macro context fields
 - `02_eda.ipynb`: explore headline volume, price movement, returns, macro context, and regimes
-- `03_sentiment_analysis.ipynb`: score headlines with a reproducible dictionary baseline, aggregate daily sentiment features, and summarize descriptive links with next-day returns
+- `03_sentiment_analysis.ipynb`: dictionary-based sentiment baseline, daily aggregation, descriptive links to next-day returns
+- `03b_advanced_sentiment.ipynb`: VADER (general), FinBERT (finance-specific BERT), and LDA topic modeling on the headline corpus; merges into `daily_with_sentiment_v2.csv`
+- `04_modeling.ipynb`: feature engineering (sentiment lags, rolling means, macro interactions, topic distributions), time-aware train/val/test split, two baselines, **five-way sentiment-method comparison** (dict / general / VADER / FinBERT / all) under both Logistic Regression and XGBoost, expanding-window OOS predictions covering all four regimes
 
-Remaining planned steps:
+Remaining planned step:
 
-- `04_modeling.ipynb`: train and validate next-day return or direction models using time-aware splits
-- `05_backtest_regime_analysis.ipynb`: evaluate model signals across regimes and test a simple long/flat strategy
+- `05_backtest_regime_analysis.ipynb`: evaluate model signals across regimes and test a simple long/flat strategy with transaction costs
 
 ## Deliverables Checklist
 
@@ -128,7 +130,9 @@ Remaining planned steps:
 - [x] Data dictionary
 - [x] Reproducible analysis notebook scaffold
 - [x] README with run instructions
-- [ ] Final analysis results
+- [x] Advanced sentiment notebook (03b) — VADER, FinBERT, topic modeling
+- [x] Modeling notebook (04) with five-way method comparison and OOS predictions
+- [ ] Backtest and regime evaluation (05)
 - [ ] Written report
 - [ ] Recorded presentation
 - [ ] Peer review submission

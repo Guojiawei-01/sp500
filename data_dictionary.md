@@ -47,9 +47,9 @@ Macro fields are downloaded from FRED, cached in `data/raw/macro/`, and joined t
 | `unemployment_rate` | `UNRATE` | float | U.S. unemployment rate. |
 | `recession_indicator` | `USREC` | float | NBER recession indicator, where 1 indicates recession and 0 indicates non-recession. |
 
-## Sentiment Fields
+## Sentiment Fields — Dictionary Baseline (notebook 03)
 
-The sentiment baseline is created in `notebooks/03_sentiment_analysis.ipynb` using transparent word and phrase dictionaries. These fields are intended as baseline features, not final NLP model outputs.
+The sentiment baseline is created in `notebooks/03_sentiment_analysis.ipynb` using transparent word and phrase dictionaries. These fields are intended as baseline features.
 
 | Field | Type | Description |
 | --- | --- | --- |
@@ -71,6 +71,37 @@ The sentiment baseline is created in `notebooks/03_sentiment_analysis.ipynb` usi
 | `neutral_headline_share` | float | Share of headlines labeled neutral on a trading date. |
 | `net_positive_negative_share` | float | Positive headline share minus negative headline share on a trading date. |
 
+## Sentiment Fields — Advanced Methods (notebook 03b)
+
+Added in `notebooks/03b_advanced_sentiment.ipynb` and merged into `daily_with_sentiment_v2.csv`.
+
+### VADER (general-purpose lexicon)
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `vader_compound` | float | Headline-level VADER compound score in [-1, 1]. |
+| `vader_pos`, `vader_neg`, `vader_neu` | float | Headline-level VADER positive / negative / neutral probabilities. |
+| `vader_compound_mean` | float | Mean VADER compound score across all headlines on a trading date. |
+| `vader_compound_std` | float | Standard deviation of VADER compound across same-day headlines. |
+| `vader_pos_share`, `vader_neg_share` | float | Share of headlines with VADER compound > 0.05 / < -0.05 on a trading date. |
+
+### FinBERT (finance-specific BERT, ProsusAI/finbert)
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `finbert_p_pos`, `finbert_p_neg`, `finbert_p_neu` | float | Headline-level FinBERT class probabilities. |
+| `finbert_score` | float | Headline-level signed score, computed as `p_pos - p_neg`. |
+| `finbert_label` | string | Argmax label: `positive`, `negative`, or `neutral`. |
+| `finbert_score_mean` | float | Daily mean FinBERT signed score. |
+| `finbert_score_std` | float | Daily standard deviation. |
+| `finbert_pos_share`, `finbert_neg_share` | float | Share of headlines labeled positive / negative on a trading date. |
+
+### LDA Topic Distribution
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `topic_0` ... `topic_7` | float | Daily mean topic-loading from an 8-topic LDA fitted on the headline corpus. Topic keywords are printed in the notebook. |
+
 ## Processed Files
 
 | File | Description |
@@ -91,6 +122,10 @@ The sentiment baseline is created in `notebooks/03_sentiment_analysis.ipynb` usi
 | `data/processed/eda_possible_off_topic_sample.csv` | Simple keyword-based sample of headlines for manual quality review. |
 | `data/processed/eda_regime_summary.csv` | Regime-level return, volatility, headline, and macro summary. |
 | `data/processed/eda_macro_coverage.csv` | Macro variable coverage summary. |
+| `data/processed/headlines_with_sentiment_v2.csv` | Headline-level table extending v1 with VADER scores, FinBERT probabilities, and LDA topic distributions. |
+| `data/processed/daily_with_sentiment_v2.csv` | Daily aggregation extending `daily_with_sentiment.csv` with VADER means, FinBERT means/shares, and 8 topic distributions. Used as input to `04_modeling.ipynb`. |
+| `data/processed/model_predictions.csv` | Model predictions on val, test, and expanding-window OOS folds. Columns: `Date`, `regime`, `y_true`, `return_next_day`, `y_pred`, `y_pred_proba`, `model_name`, `feature_set`, `split`. Five feature sets (dict / general / vader / finbert / all) under Logit and XGB. Consumed by the backtest notebook. |
+| `data/processed/model_metrics_summary.csv` | Accuracy, precision, recall, F1, and AUC for every model variant on the val and test splits. |
 
 ## Known Limitations
 
