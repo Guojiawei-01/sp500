@@ -97,6 +97,14 @@ notebooks/02_eda.ipynb
 notebooks/03_sentiment_analysis.ipynb
 notebooks/03b_advanced_sentiment.ipynb
 notebooks/04_modeling.ipynb
+notebooks/05_backtest_regime_analysis.ipynb
+```
+
+The two final notebooks call reproducible scripts directly:
+
+```bash
+python scripts/modeling_pipeline.py
+python scripts/evaluate_backtest.py
 ```
 
 Key intermediate tables:
@@ -106,7 +114,9 @@ data/processed/daily_with_macro.csv          # 01 output
 data/processed/daily_with_sentiment.csv      # 03 output (dictionary baseline)
 data/processed/daily_with_sentiment_v2.csv   # 03b output (+ VADER + FinBERT + topics)
 data/processed/model_predictions.csv         # 04 output, consumed by 05
-data/processed/model_metrics_summary.csv     # 04 output
+data/processed/model_metrics_summary.csv     # 04 output, includes balanced accuracy and Brier score
+data/processed/model_thresholds.csv          # 04 output, validation-selected classification thresholds
+data/processed/model_tuning_summary.csv      # 04 output, XGBoost validation tuning grid
 ```
 
 ## Analysis Plan
@@ -117,11 +127,8 @@ Completed steps:
 - `02_eda.ipynb`: explore headline volume, price movement, returns, macro context, and regimes
 - `03_sentiment_analysis.ipynb`: dictionary-based sentiment baseline, daily aggregation, descriptive links to next-day returns
 - `03b_advanced_sentiment.ipynb`: VADER (general), FinBERT (finance-specific BERT), and LDA topic modeling on the headline corpus; merges into `daily_with_sentiment_v2.csv`
-- `04_modeling.ipynb`: feature engineering (sentiment lags, rolling means, macro interactions, topic distributions), time-aware train/val/test split, two baselines, **five-way sentiment-method comparison** (dict / general / VADER / FinBERT / all) under both Logistic Regression and XGBoost, expanding-window OOS predictions covering all four regimes
-
-Remaining planned step:
-
-- `05_backtest_regime_analysis.ipynb`: evaluate model signals across regimes and test a simple long/flat strategy with transaction costs
+- `04_modeling.ipynb`: feature engineering (sentiment lags, rolling means, macro interactions, topic distributions), time-aware train/val/test split, two baselines, **five-way sentiment-method comparison** (dict / general / VADER / FinBERT / all) under both Logistic Regression and XGBoost, balanced Logistic Regression, XGBoost `scale_pos_weight`, calibrated probabilities, validation-selected thresholds, validation-tuned XGBoost hyperparameters, balanced accuracy, and expanding-window OOS predictions
+- `05_backtest_regime_analysis.ipynb`: regime-segmented evaluation, validation-threshold test backtest, transaction-cost robustness, model-failure cases, and continuous next-day return modeling supplement
 
 ## Deliverables Checklist
 
@@ -132,7 +139,7 @@ Remaining planned step:
 - [x] README with run instructions
 - [x] Advanced sentiment notebook (03b) — VADER, FinBERT, topic modeling
 - [x] Modeling notebook (04) with five-way method comparison and OOS predictions
-- [ ] Backtest and regime evaluation (05)
+- [x] Backtest and regime evaluation (05)
 - [ ] Written report
 - [ ] Recorded presentation
 - [ ] Peer review submission

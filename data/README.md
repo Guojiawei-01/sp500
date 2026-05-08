@@ -49,3 +49,16 @@ Generated processed files:
 - `eda_possible_off_topic_sample.csv`: simple keyword-based sample for manual headline quality review
 - `eda_regime_summary.csv`: regime-level EDA summary
 - `eda_macro_coverage.csv`: macro variable coverage rates
+- `headlines_with_sentiment_v2.csv`: headline-level VADER, FinBERT, and LDA topic features
+- `daily_with_sentiment_v2.csv`: daily table with dictionary, VADER, FinBERT, topic, macro, and target fields
+- `model_predictions.csv`: calibrated Logit/XGB predictions with validation-selected thresholds
+- `model_metrics_summary.csv`: model metrics including balanced accuracy, AUC, F1, and Brier score
+- `model_thresholds.csv`: thresholds selected on validation balanced accuracy
+- `model_tuning_summary.csv`: XGBoost validation tuning grid
+- `model_regime_metrics.csv`: classification metrics by regime
+- `backtest_performance_summary.csv`: long/flat strategy summary by split/model/feature set
+- `backtest_regime_summary.csv`: backtest summary by market regime
+- `robustness_threshold_cost_summary.csv`: threshold and transaction-cost robustness checks
+- `model_failure_cases.csv`: selected failure cases for report discussion
+- `return_model_metrics_summary.csv`: continuous next-day return model metrics
+- `return_model_predictions.csv`: test-set return predictions used for figure 9

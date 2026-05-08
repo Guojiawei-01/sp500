@@ -124,8 +124,17 @@ Added in `notebooks/03b_advanced_sentiment.ipynb` and merged into `daily_with_se
 | `data/processed/eda_macro_coverage.csv` | Macro variable coverage summary. |
 | `data/processed/headlines_with_sentiment_v2.csv` | Headline-level table extending v1 with VADER scores, FinBERT probabilities, and LDA topic distributions. |
 | `data/processed/daily_with_sentiment_v2.csv` | Daily aggregation extending `daily_with_sentiment.csv` with VADER means, FinBERT means/shares, and 8 topic distributions. Used as input to `04_modeling.ipynb`. |
-| `data/processed/model_predictions.csv` | Model predictions on val, test, and expanding-window OOS folds. Columns: `Date`, `regime`, `y_true`, `return_next_day`, `y_pred`, `y_pred_proba`, `model_name`, `feature_set`, `split`. Five feature sets (dict / general / vader / finbert / all) under Logit and XGB. Consumed by the backtest notebook. |
-| `data/processed/model_metrics_summary.csv` | Accuracy, precision, recall, F1, and AUC for every model variant on the val and test splits. |
+| `data/processed/model_predictions.csv` | Calibrated model predictions on val, test, and expanding-window OOS folds. Columns include `Date`, `regime`, `y_true`, `return_next_day`, `y_pred`, `y_pred_proba`, `model_name`, `feature_set`, `split`, `threshold`, and `threshold_source`. Consumed by the backtest notebook. |
+| `data/processed/model_metrics_summary.csv` | Accuracy, balanced accuracy, precision, recall, F1, AUC, Brier score, and selected threshold for every model variant on the val and test splits. |
+| `data/processed/model_thresholds.csv` | Validation-selected classification thresholds for each Logit/XGB feature set. Thresholds are chosen by validation balanced accuracy and then applied to the test split. |
+| `data/processed/model_tuning_summary.csv` | XGBoost validation-grid results for `max_depth`, `learning_rate`, `n_estimators`, and `scale_pos_weight`. |
+| `data/processed/model_regime_metrics.csv` | Classification metrics sliced by split, model, feature set, and market regime. |
+| `data/processed/backtest_performance_summary.csv` | Long/flat strategy performance by split, model, and feature set with transaction costs. |
+| `data/processed/backtest_regime_summary.csv` | Long/flat strategy performance sliced by market regime. |
+| `data/processed/robustness_threshold_cost_summary.csv` | Threshold and transaction-cost robustness results. |
+| `data/processed/model_failure_cases.csv` | Selected false-long losses, missed rallies, and classification errors for final-report discussion. |
+| `data/processed/return_model_metrics_summary.csv` | Continuous next-day return model metrics for Ridge, XGBRegressor, and historical-mean baseline. |
+| `data/processed/return_model_predictions.csv` | Test-set continuous return predictions used to draw `fig9_return_model_predictions.png`. |
 
 ## Known Limitations
 
