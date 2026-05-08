@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Does Financial News Sentiment Move the S&P 500?</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#overview" aria-label="Project overview">
+        <span class="brand-mark">S&amp;P</span>
+        <span>News Sentiment Dashboard</span>
+      </a>
+      <nav class="nav" aria-label="Presentation sections">
+        <a href="#data">Data</a>
+        <a href="#sentiment">Sentiment</a>
+        <a href="#models">Models</a>
+        <a href="#backtest">Backtest</a>
+        <a href="#regimes">Regimes</a>
+        <a href="#takeaways">Takeaways</a>
+      </nav>
+      <div id="scrollProgress" class="scroll-progress" aria-hidden="true"></div>
+    </header>
+
+    <main>
+      <section id="overview" class="section intro-grid">
+        <div class="intro-copy">
+          <p class="eyebrow">DATA 498D Capstone</p>
+          <h1>Does Financial News Sentiment Move the S&amp;P 500?</h1>
+          <p class="lead">
+            We tested whether daily financial headlines contain useful information about
+            next-day S&amp;P 500 direction, returns, and simple trading performance.
+          </p>
+          <div class="result-callout">
+            <span class="callout-label">Bottom line</span>
+            <strong>Headline sentiment is weak, unstable, and regime-dependent.</strong>
+            <p>
+              Finance-specific signals sometimes help in selected backtests, but they do
+              not create a reliable next-day prediction edge.
+            </p>
+          </div>
+        </div>
+        <div class="metric-panel" aria-label="Project summary metrics">
+          <div class="metric-card">
+            <span>Raw headline rows</span>
+            <strong>19,127</strong>
+            <small>2008-01-02 to 2024-03-04</small>
+          </div>
+          <div class="metric-card">
+            <span>Prepared daily rows</span>
+            <strong>3,506</strong>
+            <small>after duplicate removal and daily aggregation</small>
+          </div>
+          <div class="metric-card">
+            <span>Best test balanced accuracy</span>
+            <strong>51.4%</strong>
+            <small>XGB with VADER features</small>
+          </div>
+          <div class="metric-card">
+            <span>Best selected test return</span>
+            <strong>13.1%</strong>
+            <small>Logit with FinBERT, long/flat backtest</small>
+          </div>
+        </div>
+      </section>
+
+      <section id="data" class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Dataset</p>
+          <h2>Headline volume changes the research problem</h2>
+          <p>
+            The raw data is headline-level, then aggregated to daily observations with
+            next-day return and direction targets. Headline density rises sharply after 2019,
+            so the project treats source drift as a core limitation.
+          </p>
+        </div>
+        <div class="two-column">
+          <article class="panel">
+            <div class="panel-header">
+              <h3>Headlines by Year</h3>
+              <span class="chip">raw headline rows</span>
+            </div>
+            <div id="headlineChart" class="chart chart-tall" role="img" aria-label="Headline rows by year"></div>
+          </article>
+          <article class="panel">
+            <div class="panel-header">
+              <h3>Regime Context</h3>
+              <span class="chip">daily sample</span>
+            </div>
+            <div id="regimeCards" class="regime-grid"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="sentiment" class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Sentiment Analysis</p>
+          <h2>Simple sentiment does not move in a clean line with next-day returns</h2>
+          <p>
+            Dictionary sentiment provides an interpretable baseline. The tercile view is
+            useful for presentation because it shows the central result clearly: the middle
+            sentiment group has the highest average next-day return, not the highest group.
+          </p>
+        </div>
+        <div class="two-column wide-left">
+          <article class="panel">
+            <div class="panel-header">
+              <h3>Finance Sentiment Terciles</h3>
+              <span class="chip">next-day outcomes</span>
+            </div>
+            <div id="tercileChart" class="chart chart-medium" role="img" aria-label="Sentiment tercile outcomes"></div>
+          </article>
+          <article class="panel narrative-panel">
+            <h3>Key descriptive numbers</h3>
+            <dl class="number-list">
+              <div>
+                <dt>Avg finance sentiment vs next-day return</dt>
+                <dd>-0.012</dd>
+              </div>
+              <div>
+                <dt>Avg finance sentiment vs next-day direction</dt>
+                <dd>0.022</dd>
+              </div>
+              <div>
+                <dt>High sentiment next-day return</dt>
+                <dd>0.049%</dd>
+              </div>
+              <div>
+                <dt>High sentiment up-day rate</dt>
+                <dd>54.1%</dd>
+              </div>
+            </dl>
+            <p>
+              These values are small enough that sentiment alone should be framed as a
+              weak descriptive relationship, not a stand-alone prediction system.
+            </p>
+          </article>
+        </div>
+        <figure class="figure-strip">
+          <img src="assets/figures/sentiment_analysis_summary.png" alt="Dictionary sentiment summary charts" />
+          <figcaption>Dictionary sentiment summary used as the transparent baseline.</figcaption>
+        </figure>
+      </section>
+
+      <section id="models" class="section">
+        <div class="section-heading compact-heading">
+          <p class="eyebrow">Predictive Modeling</p>
+          <h2>Models stay close to baseline on held-out direction prediction</h2>
+          <p>
+            Logistic regression and XGBoost were compared across dictionary, general,
+            VADER, FinBERT, and all-feature sets using time-aware validation and test splits.
+          </p>
+        </div>
+        <article class="panel">
+          <div class="panel-header">
+            <h3>Test-Set Model Comparison</h3>
+            <div class="segmented" aria-label="Model metric selector">
+              <button class="seg-button active" data-model-metric="balanced_accuracy">Balanced Acc.</button>
+              <button class="seg-button" data-model-metric="accuracy">Accuracy</button>
+              <button class="seg-button" data-model-metric="auc">AUC</button>
+            </div>
+          </div>
+          <div id="modelChart" class="chart chart-medium" role="img" aria-label="Model metric comparison"></div>
+        </article>
+        <div class="figure-grid">
+          <figure>
+            <img src="assets/figures/fig2_sentiment_method_comparison.png" alt="Sentiment method comparison figure" />
+            <figcaption>Five-way sentiment method comparison.</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/figures/fig5_roc_test.png" alt="Held-out test ROC curves" />
+            <figcaption>ROC curves remain close to 0.50.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section id="backtest" class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Economic Evaluation</p>
+          <h2>Backtests look more interesting than classification metrics, but the edge is fragile</h2>
+          <p>
+            The long/flat strategy is long when predicted up-day probability clears the
+            validation-selected threshold and flat otherwise. A 1 basis point cost is charged
+            when position changes.
+          </p>
+        </div>
+        <article class="panel">
+          <div class="panel-header">
+            <h3>Selected Test Backtests</h3>
+            <div class="segmented" aria-label="Backtest metric selector">
+              <button class="seg-button active" data-backtest-metric="strategy_cumulative_return">Return</button>
+              <button class="seg-button" data-backtest-metric="exposure">Exposure</button>
+              <button class="seg-button" data-backtest-metric="strategy_max_drawdown">Max DD</button>
+            </div>
+          </div>
+          <div id="backtestChart" class="chart chart-medium" role="img" aria-label="Backtest metric comparison"></div>
+        </article>
+        <div class="two-column">
+          <article class="panel narrative-panel signal-panel">
+            <div class="panel-kicker">Signal Reality Check</div>
+            <h3>The best-looking backtest is not the whole story</h3>
+            <p>
+              The all-feature models mostly behave like buy-and-hold on the test set,
+              while the more selective sentiment variants trade less often. This is why
+              we discuss return, exposure, drawdown, and trade count together.
+            </p>
+            <div id="signalReality" class="signal-grid"></div>
+          </article>
+          <article class="panel narrative-panel">
+            <h3>Presentation framing</h3>
+            <p>
+              The FinBERT and VADER variants are the most presentation-friendly examples:
+              they show that finance-aware sentiment can help in some settings. The honest
+              interpretation is that this is a fragile signal, not a stable trading rule.
+            </p>
+            <div class="mini-table" id="backtestTable"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="regimes" class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Regime Evaluation</p>
+          <h2>The same model behaves differently across market periods</h2>
+          <p>
+            This is the strongest part of the evaluation story. It explains why a single
+            overall accuracy number is not enough for a market project.
+          </p>
+        </div>
+        <div class="figure-grid">
+          <figure>
+            <img src="assets/figures/fig7_regime_backtest_returns.png" alt="Regime-level backtest returns" />
+            <figcaption>Regime-level returns from the expanding-window backtest.</figcaption>
+          </figure>
+          <figure>
+            <img src="assets/figures/fig8_backtest_robustness.png" alt="Threshold and transaction cost robustness" />
+            <figcaption>Threshold and cost choices materially change strategy behavior.</figcaption>
+          </figure>
+        </div>
+        <article class="panel">
+          <div class="panel-header">
+            <h3>Held-Out Rate-Hike Cycle Results</h3>
+            <span class="chip">2022-2023 test regime</span>
+          </div>
+          <div id="rateHikeCards" class="summary-grid"></div>
+        </article>
+      </section>
+
+      <section id="takeaways" class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Final Story</p>
+          <h2>What the project shows</h2>
+        </div>
+        <div class="takeaway-grid">
+          <article class="takeaway-card accent-blue">
+            <span>1</span>
+            <h3>Daily headline sentiment is not a strong predictor</h3>
+            <p>
+              Correlations are small, direction models hover near chance, and continuous
+              return models barely improve over a historical mean.
+            </p>
+          </article>
+          <article class="takeaway-card accent-green">
+            <span>2</span>
+            <h3>Finance-specific language can still be useful</h3>
+            <p>
+              FinBERT and VADER variants show better selected backtests than simple
+              dictionary baselines, but the gains need careful validation.
+            </p>
+          </article>
+          <article class="takeaway-card accent-red">
+            <span>3</span>
+            <h3>Evaluation choices decide the credibility of the result</h3>
+            <p>
+              Regimes, thresholds, exposure, transaction costs, and failure cases turn a
+              simple model comparison into a more honest project conclusion.
+            </p>
+          </article>
+        </div>
+        <div class="two-column followup-row">
+          <article class="panel narrative-panel next-panel">
+            <div class="panel-kicker">What We Would Do Next</div>
+            <h3>Stronger data would matter more than a more complicated model</h3>
+            <div class="next-list">
+              <div>
+                <strong>Use timestamped news</strong>
+                <span>Match headlines to intraday returns instead of daily close-to-close moves.</span>
+              </div>
+              <div>
+                <strong>Add source metadata</strong>
+                <span>Separate major outlets, duplicates, and off-topic headlines more carefully.</span>
+              </div>
+              <div>
+                <strong>Model event types</strong>
+                <span>Test Fed policy, inflation, earnings, geopolitics, and banking stress separately.</span>
+              </div>
+              <div>
+                <strong>Use stricter trading validation</strong>
+                <span>Apply walk-forward threshold selection, wider cost assumptions, and position sizing.</span>
+              </div>
+            </div>
+          </article>
+          <article class="panel narrative-panel speaker-panel">
+            <div class="panel-kicker">8-12 Minute Speaking Flow</div>
+            <h3>One clean way for all five members to speak</h3>
+            <ol class="speaker-list">
+              <li><strong>Jiawei Guo:</strong> problem, dataset, cleaning, limitations.</li>
+              <li><strong>Chaoran Chen:</strong> sentiment methods and topic features.</li>
+              <li><strong>Haoyang Liu:</strong> modeling design and test metrics.</li>
+              <li><strong>Haonan Li:</strong> backtest, regimes, robustness, failure cases.</li>
+              <li><strong>Duli Lei:</strong> conclusion, next steps, final wrap-up.</li>
+            </ol>
+          </article>
+        </div>
+        <figure class="figure-strip">
+          <img src="assets/figures/fig9_return_model_predictions.png" alt="Continuous return prediction plots" />
+          <figcaption>Continuous return prediction confirms that the signal is limited.</figcaption>
+        </figure>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>DATA 498D Capstone</span>
+      <span>Financial news sentiment, S&amp;P 500 direction, regime evaluation, and backtesting</span>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>

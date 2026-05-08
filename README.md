@@ -82,6 +82,11 @@ Important data limitations:
 │   ├── 03b_advanced_sentiment.ipynb
 │   ├── 04_modeling.ipynb
 │   └── 05_backtest_regime_analysis.ipynb
+├── presentation/
+│   ├── index.html
+│   ├── styles.css
+│   ├── app.js
+│   └── assets/figures/
 ├── scripts/
 │   ├── prepare_data.py
 │   ├── modeling_pipeline.py
@@ -133,6 +138,14 @@ python scripts/modeling_pipeline.py
 python scripts/evaluate_backtest.py
 ```
 
+4. View the static presentation dashboard:
+
+```text
+presentation/index.html
+```
+
+The dashboard is self-contained and uses the exported project figures in `presentation/assets/figures/`. It can be opened directly in a browser for a non-slide presentation walkthrough.
+
 Key intermediate tables:
 
 ```text
@@ -175,7 +188,8 @@ Completed steps:
 - [x] Advanced sentiment notebook (03b) — VADER, FinBERT, topic modeling
 - [x] Modeling notebook (04) with five-way method comparison and OOS predictions
 - [x] Backtest and regime evaluation (05)
-- [ ] CONTRIBUTIONS.md finalized with real team member roles
+- [x] Static presentation dashboard
+- [x] CONTRIBUTIONS.md finalized with real team member roles
 - [x] Written report
 - [ ] Recorded presentation
 - [ ] Peer review submission
