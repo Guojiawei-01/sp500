@@ -87,6 +87,7 @@ Important data limitations:
 │   ├── modeling_pipeline.py
 │   └── evaluate_backtest.py
 └── report/
+    ├── final_report.docx
     ├── data_preparation_summary.md
     └── backtest_regime_summary.md
 ```
@@ -144,6 +145,7 @@ data/processed/model_tuning_summary.csv      # 04 output, XGBoost validation tun
 data/processed/backtest_performance_summary.csv
 data/processed/backtest_regime_summary.csv
 data/processed/return_model_metrics_summary.csv
+report/final_report.docx
 report/backtest_regime_summary.md
 ```
 
@@ -172,7 +174,7 @@ Completed steps:
 - [x] Modeling notebook (04) with five-way method comparison and OOS predictions
 - [x] Backtest and regime evaluation (05)
 - [ ] CONTRIBUTIONS.md finalized with real team member roles
-- [ ] Written report
+- [x] Written report
 - [ ] Recorded presentation
 - [ ] Peer review submission
 
