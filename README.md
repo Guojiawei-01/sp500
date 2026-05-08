@@ -86,6 +86,8 @@ Important data limitations:
 │   ├── index.html
 │   ├── styles.css
 │   ├── app.js
+│   ├── video/
+│   │   └── meeting_04.mp4
 │   └── assets/figures/
 ├── scripts/
 │   ├── prepare_data.py
@@ -146,6 +148,12 @@ presentation/index.html
 
 The dashboard is self-contained and uses the exported project figures in `presentation/assets/figures/`. It can be opened directly in a browser for a non-slide presentation walkthrough.
 
+The recorded group presentation is included here:
+
+```text
+presentation/video/meeting_04.mp4
+```
+
 Key intermediate tables:
 
 ```text
@@ -191,7 +199,7 @@ Completed steps:
 - [x] Static presentation dashboard
 - [x] CONTRIBUTIONS.md finalized with real team member roles
 - [x] Written report
-- [ ] Recorded presentation
+- [x] Recorded presentation
 - [ ] Peer review submission
 
 ## Note on Written Work

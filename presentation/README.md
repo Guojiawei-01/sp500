@@ -9,10 +9,18 @@ presentation/
 ├── index.html
 ├── styles.css
 ├── app.js
+├── video/
+│   └── meeting_04.mp4
 └── assets/figures/
 ```
 
 The dashboard uses static project figures exported from the notebooks and scripts. No server-side code or build step is required.
+
+The recorded group presentation is stored at:
+
+```text
+presentation/video/meeting_04.mp4
+```
 
 ## How to View
 
