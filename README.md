@@ -88,6 +88,7 @@ Important data limitations:
 │   └── evaluate_backtest.py
 └── report/
     ├── final_report.docx
+    ├── final_report.pdf
     ├── data_preparation_summary.md
     └── backtest_regime_summary.md
 ```
@@ -146,6 +147,7 @@ data/processed/backtest_performance_summary.csv
 data/processed/backtest_regime_summary.csv
 data/processed/return_model_metrics_summary.csv
 report/final_report.docx
+report/final_report.pdf
 report/backtest_regime_summary.md
 ```
 
