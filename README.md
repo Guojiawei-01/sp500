@@ -54,9 +54,27 @@ Important data limitations:
 ├── new.pdf
 ├── data/
 │   ├── raw/
-│   │   └── sp500_headlines_2008_2024.csv
+│   │   ├── sp500_headlines_2008_2024.csv
+│   │   └── macro/
 │   └── processed/
+│       ├── daily_with_macro.csv
+│       ├── daily_with_sentiment.csv
+│       ├── daily_with_sentiment_v2.csv
+│       ├── model_predictions.csv
+│       ├── model_metrics_summary.csv
+│       ├── backtest_performance_summary.csv
+│       └── backtest_regime_summary.csv
 ├── figures/
+│   ├── fig1_split_timeline.png
+│   ├── fig2_sentiment_method_comparison.png
+│   ├── fig3_logit_coefficients.png
+│   ├── fig4_xgb_feature_importance.png
+│   ├── fig5_roc_test.png
+│   ├── fig6_backtest_equity_curves.png
+│   ├── fig7_regime_backtest_returns.png
+│   ├── fig8_backtest_robustness.png
+│   ├── fig9_return_model_predictions.png
+│   └── sentiment_analysis_summary.png
 ├── notebooks/
 │   ├── 01_data_cleaning.ipynb
 │   ├── 02_eda.ipynb
@@ -65,31 +83,37 @@ Important data limitations:
 │   ├── 04_modeling.ipynb
 │   └── 05_backtest_regime_analysis.ipynb
 ├── scripts/
-│   └── prepare_data.py
+│   ├── prepare_data.py
+│   ├── modeling_pipeline.py
+│   └── evaluate_backtest.py
 └── report/
+    ├── data_preparation_summary.md
+    └── backtest_regime_summary.md
 ```
 
 ## How to Run
 
-Install dependencies:
+Install dependencies first:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Run the data preparation pipeline:
+The processed outputs are already included in the repository. To reproduce them from the raw files, run the project in this order.
+
+1. Prepare the daily dataset and macro context:
 
 ```bash
 python scripts/prepare_data.py
 ```
 
-To refresh the FRED macro files:
+Use this only if the FRED macro files need to be refreshed:
 
 ```bash
 python scripts/prepare_data.py --refresh-macro
 ```
 
-Run the notebooks in order:
+2. Run the notebooks in order:
 
 ```text
 notebooks/01_data_cleaning.ipynb
@@ -100,7 +124,7 @@ notebooks/04_modeling.ipynb
 notebooks/05_backtest_regime_analysis.ipynb
 ```
 
-The two final notebooks call reproducible scripts directly:
+3. The modeling and backtest steps can also be rerun directly:
 
 ```bash
 python scripts/modeling_pipeline.py
@@ -117,6 +141,10 @@ data/processed/model_predictions.csv         # 04 output, consumed by 05
 data/processed/model_metrics_summary.csv     # 04 output, includes balanced accuracy and Brier score
 data/processed/model_thresholds.csv          # 04 output, validation-selected classification thresholds
 data/processed/model_tuning_summary.csv      # 04 output, XGBoost validation tuning grid
+data/processed/backtest_performance_summary.csv
+data/processed/backtest_regime_summary.csv
+data/processed/return_model_metrics_summary.csv
+report/backtest_regime_summary.md
 ```
 
 ## Analysis Plan
@@ -135,11 +163,15 @@ Completed steps:
 - [x] Project proposal
 - [x] Dataset added to repository
 - [x] Data dictionary
-- [x] Reproducible analysis notebook scaffold
+- [x] Reproducible notebooks for cleaning, EDA, sentiment, modeling, and backtesting
+- [x] Reproducible scripts for data preparation, modeling, and backtest evaluation
 - [x] README with run instructions
+- [x] Processed output tables generated
+- [x] Figures generated for report and presentation use
 - [x] Advanced sentiment notebook (03b) — VADER, FinBERT, topic modeling
 - [x] Modeling notebook (04) with five-way method comparison and OOS predictions
 - [x] Backtest and regime evaluation (05)
+- [ ] CONTRIBUTIONS.md finalized with real team member roles
 - [ ] Written report
 - [ ] Recorded presentation
 - [ ] Peer review submission
